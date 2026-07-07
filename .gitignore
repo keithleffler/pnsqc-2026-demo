@@ -1,0 +1,16 @@
+# Dependencies
+**/node_modules
+
+# Env files (contain demo secrets / keys)
+backend/.env
+storefront/.env.local
+.env
+
+# Build / runtime output
+backend/.medusa
+backend/dist
+storefront/.next
+storefront/out
+
+# Logs
+*.log

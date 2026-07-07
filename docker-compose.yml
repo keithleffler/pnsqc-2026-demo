@@ -1,0 +1,25 @@
+# Local infrastructure for the Medusa anchor app.
+# For "run locally first" this brings up only Postgres; the backend and
+# storefront run on the host via yarn. Ports are parametrized in .env so the
+# same file can be extended into a full stack on another host later.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: medusa_anchor_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
