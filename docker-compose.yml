@@ -1,11 +1,11 @@
-# Local infrastructure for the Medusa anchor app.
-# For "run locally first" this brings up only Postgres; the backend and
-# storefront run on the host via yarn. Ports are parametrized in .env so the
-# same file can be extended into a full stack on another host later.
+# Full Medusa anchor stack: Postgres + backend (API + admin) + Next.js storefront.
+# All ports/URLs/secrets are parametrized in .env so the stack can be re-homed
+# (e.g. onto odinforge) without editing this file. Container-to-container traffic
+# uses the internal service DNS names (postgres:5432, backend:9000); the *_PORT
+# vars only control what is published on the Docker host.
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: medusa_anchor_postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -20,6 +20,49 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      JWT_SECRET: ${JWT_SECRET}
+      COOKIE_SECRET: ${COOKIE_SECRET}
+      MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY}
+      # CORS: which browser origins may call the API
+      STORE_CORS: ${PUBLIC_STOREFRONT_URL}
+      ADMIN_CORS: ${PUBLIC_BACKEND_URL}
+      AUTH_CORS: ${PUBLIC_BACKEND_URL},${PUBLIC_STOREFRONT_URL}
+    ports:
+      - "${BACKEND_PORT}:9000"
+
+  storefront:
+    build:
+      context: ./storefront
+      args:
+        # NEXT_PUBLIC_* are baked into the build; MEDUSA_BACKEND_URL is the
+        # internal SSR target used while (pre-)rendering pages.
+        NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY}
+        NEXT_PUBLIC_BASE_URL: ${PUBLIC_STOREFRONT_URL}
+        NEXT_PUBLIC_DEFAULT_REGION: ${STOREFRONT_DEFAULT_REGION}
+        MEDUSA_BACKEND_URL: http://backend:9000
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: production
+      # Server-side (SSR/middleware) calls go over the internal network
+      MEDUSA_BACKEND_URL: http://backend:9000
+      NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY}
+      NEXT_PUBLIC_BASE_URL: ${PUBLIC_STOREFRONT_URL}
+      NEXT_PUBLIC_DEFAULT_REGION: ${STOREFRONT_DEFAULT_REGION}
+    ports:
+      - "${STOREFRONT_PORT}:8010"
 
 volumes:
   postgres_data:
