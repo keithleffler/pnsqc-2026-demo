@@ -5,6 +5,14 @@ import { getRegion, listRegions } from "@lib/data/regions"
 import ProductTemplate from "@modules/products/templates"
 import { HttpTypes } from "@medusajs/types"
 
+// The product page reads `searchParams` (the `v_id` variant selector) and shows
+// live, region-specific pricing, so it must render per-request. Without this,
+// `generateStaticParams` opts the route into static generation and reading
+// `searchParams` during that render throws DYNAMIC_SERVER_USAGE in a production
+// build — which is unavoidable here because the backend is not reachable while
+// the storefront image is built (so generateStaticParams returns []).
+export const dynamic = "force-dynamic"
+
 type Props = {
   params: Promise<{ countryCode: string; handle: string }>
   searchParams: Promise<{ v_id?: string }>
