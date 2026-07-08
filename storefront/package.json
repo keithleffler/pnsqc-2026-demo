@@ -34,7 +34,7 @@
     "webpack": "^5"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.5",
+    "@babel/core": "^7.29.6",
     "@medusajs/types": "latest",
     "@medusajs/ui-preset": "latest",
     "@types/lodash": "^4.14.195",
