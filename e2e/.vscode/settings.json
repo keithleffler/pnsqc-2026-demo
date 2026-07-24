@@ -1,0 +1,18 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "files.exclude": {
+    "**/dist": true,
+    "**/.playwright-report": true,
+    "**/test-results": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "eslint.validate": ["typescript"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  // Cucumber extension: enables step autocomplete + go-to-definition
+  // from .feature files into the playwright-bdd step definitions.
+  "cucumber.features": ["src/tests/features/**/*.feature"],
+  "cucumber.glue": ["src/tests/steps/**/*.ts"]
+}

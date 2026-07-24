@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "nodenext",
+    "lib": ["ESNext", "DOM"],
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "nodenext",
+    "noEmit": true,
+    "types": ["node"],
+    "paths": { "@src/*": ["./src/*"], "@features/*": ["./features/*"], "@tests/*": ["./tests/*"] }
+  },
+  "exclude": ["node_modules", ".features-gen", "dist"],
+  "include": ["src/**/*.ts", "tests/**/*.ts"]
+}

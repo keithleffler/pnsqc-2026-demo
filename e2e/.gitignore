@@ -1,0 +1,17 @@
+
+# Environment
+.env
+
+# Test reports
+/reports/
+
+# Playwright-BDD generated test files
+/.features-gen/
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

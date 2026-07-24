@@ -1,0 +1,7 @@
+{
+  // Debugging is driven by the Playwright Test extension (Testing panel /
+  // gutter icons), with the "bddgen: watch" background task in tasks.json
+  // keeping .features-gen up to date. No launch configs are needed here.
+  "version": "0.2.0",
+  "configurations": []
+}
