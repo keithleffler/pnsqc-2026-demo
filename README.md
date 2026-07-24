@@ -36,7 +36,11 @@ On first boot the backend entrypoint (`backend/docker-entrypoint.sh`) is idempot
 it runs DB migrations, then `src/scripts/bootstrap.ts` which **seeds the catalog only
 if empty**, ensures the **United States** region exists, and **pins the publishable
 key** to `MEDUSA_PUBLISHABLE_KEY` so the pre-built storefront (which baked the same
-value at build time) can talk to the API. Re-running `up` is safe.
+value at build time) can talk to the API. It then **creates the admin user**
+(`ADMIN_EMAIL` / `ADMIN_PASSWORD`) if it doesn't already exist. Re-running `up` is safe.
+
+Log into the admin at http://localhost:9001/app with `admin@example.com` /
+`supersecret` (change via `ADMIN_EMAIL` / `ADMIN_PASSWORD` in `.env`).
 
 ### Ports (from `.env`)
 
@@ -62,13 +66,15 @@ Prices display in USD (e.g. `$15.00`); the price element carries
 ### ⚠️ Shell env vars override `.env`
 
 Docker Compose gives **shell environment variables precedence over the `.env`
-file**. If your shell exports `POSTGRES_PORT` / `BACKEND_PORT` / `STOREFRONT_PORT`
-(the local host-dev demo sets these to 5442 / 9000 / 8010), compose uses *those*
-instead of the `.env` values and you'll get port collisions. Either run in a shell
-that doesn't export them, or unset them for the command:
+file**. If your shell exports any var that also appears in `.env`, compose uses the
+*shell* value. The local host-dev demo exports `POSTGRES_PORT` / `BACKEND_PORT` /
+`STOREFRONT_PORT` (5442 / 9000 / 8010) **and** `POSTGRES_DB` (`medusa_anchor`), so a
+bare `up` gets port collisions and the wrong DB name. Either run in a shell that
+doesn't export them, or unset them for the command:
 
 ```bash
-env -u POSTGRES_PORT -u BACKEND_PORT -u STOREFRONT_PORT docker compose up --build -d
+env -u POSTGRES_PORT -u BACKEND_PORT -u STOREFRONT_PORT -u POSTGRES_DB \
+  docker compose up --build -d
 ```
 
 On odinforge (where those vars aren't set) plain `docker compose up --build -d` works.
