@@ -14,3 +14,6 @@ storefront/out
 
 # Logs
 *.log
+
+# AI files
+.claude/**
