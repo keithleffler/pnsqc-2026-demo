@@ -1,0 +1,52 @@
+{
+  "name": "playwright-ts-cucumber",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "prepare": "husky",
+    "pretest": "tsc --noEmit && npm run lint",
+    "prettier": "prettier --write .",
+    "bddgen": "bddgen test",
+    "bddgen:watch": "nodemon --watch src/tests/features --watch src/tests/steps -e feature,ts --exec \"bddgen test\"",
+    "test": "bddgen test && playwright test",
+    "test:report": "playwright show-report"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@commitlint/config-conventional": "^21.0.2",
+    "@cucumber/cucumber": "^13.0.0",
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^25.9.3",
+    "@typescript-eslint/eslint-plugin": "^8.61.1",
+    "@typescript-eslint/parser": "^8.61.1",
+    "commitlint": "^21.0.2",
+    "eslint": "^9.39.4",
+    "eslint-plugin-playwright": "^2.10.4",
+    "eslint-plugin-promise": "^6.6.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7",
+    "nodemon": "^3.1.14",
+    "playwright": "^1.61.0",
+    "playwright-bdd": "^9.2.0",
+    "prettier": "^3.8.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  }
+}

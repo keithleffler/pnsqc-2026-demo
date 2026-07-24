@@ -1,0 +1,18 @@
+npx lint-staged
+
+# Enforce branch naming, but allow committing on main/master.
+local_branch="$(git rev-parse --abbrev-ref HEAD)"
+valid_branch_regex="^(feature|fix|hotfix|improvement|library)/(TAE|QE)-[0-9]{1,5}_[A-Za-z0-9._-]+$"
+
+case "$local_branch" in
+  main|master|HEAD) exit 0 ;;
+esac
+
+if ! echo "$local_branch" | grep -Eq "$valid_branch_regex"; then
+  echo "There is something wrong with your branch name '$local_branch'."
+  echo "Branch names in this project must match: $valid_branch_regex"
+  echo "Rename it with: git branch -m <new_branch_name>"
+  exit 1
+fi
+
+exit 0
