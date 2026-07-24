@@ -1,0 +1,14 @@
+# Dependencies / package manager
+**/node_modules
+**/.yarn
+**/yarn.lock
+
+# Build & runtime output
+backend/.medusa
+backend/dist
+storefront/.next
+storefront/out
+
+# Generated
+storefront/next-env.d.ts
+**/*.log
