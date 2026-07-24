@@ -14,5 +14,12 @@ echo "[entrypoint] Bootstrapping store data (seed-if-empty, US region, pin key).
 npx medusa exec ./src/scripts/bootstrap.js \
   || echo "[entrypoint] WARNING: bootstrap step failed; continuing to start server"
 
+# Ensure an admin user exists. The CLI errors if the user is already present
+# (e.g. on a warm volume), which is expected and swallowed — this keeps the step
+# idempotent across restarts.
+echo "[entrypoint] Ensuring admin user (${ADMIN_EMAIL:-admin@example.com})..."
+npx medusa user -e "${ADMIN_EMAIL:-admin@example.com}" -p "${ADMIN_PASSWORD:-supersecret}" \
+  || echo "[entrypoint] admin user already exists (or creation skipped)"
+
 echo "[entrypoint] Starting Medusa server on :9000 ..."
 exec npm run start
