@@ -49,8 +49,10 @@ export class ProductDetailPage {
       ProductDetailPageLocators.PRICE,
       'Product price should be visible'
     );
+    // A product carries one options group per option (e.g. Size and Color), so
+    // assert the first group is shown rather than requiring a single match.
     await expectUtils.expectElementToBeVisible(
-      ProductDetailPageLocators.OPTIONS,
+      this.uiActions.element(ProductDetailPageLocators.OPTIONS, 'Product options').first(),
       'Product options should be visible'
     );
     await expectUtils.expectElementToBeVisible(

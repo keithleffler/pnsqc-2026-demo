@@ -2,6 +2,7 @@ import { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
 import seedDemoData from "./seed"
 import addUsRegion from "./add-us-region"
+import addSale from "./add-sale"
 
 /**
  * Idempotent bootstrap run by the Docker entrypoint on every backend start:
@@ -29,6 +30,15 @@ export default async function bootstrap(args: ExecArgs) {
 
   logger.info("[bootstrap] Ensuring United States region...")
   await addUsRegion(args)
+
+  // Demo sale for the paper figures. Wrapped so a pricing-API change can never
+  // block a backend boot; the store simply renders without the sale.
+  try {
+    logger.info("[bootstrap] Ensuring demo sale price list...")
+    await addSale(args)
+  } catch (e) {
+    logger.warn(`[bootstrap] Could not create demo sale: ${(e as Error).message}`)
+  }
 
   const targetKey = process.env.MEDUSA_PUBLISHABLE_KEY
   if (targetKey) {
