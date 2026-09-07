@@ -77,4 +77,33 @@ export class ExpectUtils {
       throw new Error(errorMessage);
     }
   }
+
+  public async expectPageToHaveURL(
+    urlOrRegExp: string | RegExp,
+    errorMessage: string,
+    options?: ExpectOptions
+  ): Promise<void> {
+    const assert = this.getExpectWithSoftOption(options);
+    try {
+      await assert(this.actions.getPage()).toHaveURL(urlOrRegExp, options);
+    } catch (error) {
+      console.log('expectPageToHaveURL error:', error);
+      throw new Error(errorMessage);
+    }
+  }
+
+  public async expectElementToContainText(
+    input: string | Locator,
+    expected: string | RegExp,
+    errorMessage: string,
+    options?: ExpectOptions
+  ): Promise<void> {
+    const { locator, assert } = this.getLocatorAndAssert(input, options);
+    try {
+      await assert(locator).toContainText(expected, options);
+    } catch (error) {
+      console.log('expectElementToContainText error:', error);
+      throw new Error(errorMessage);
+    }
+  }
 }
